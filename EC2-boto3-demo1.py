@@ -1,7 +1,16 @@
 import boto3
+import os
 
-#use the nameed profile
-session = boto3.Session(profile_name='boto3-practice')
+# Use environment variables for AWS credentials (set these in Jenkins pipeline)
+aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
+aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+aws_region = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')  # Default region if not set
+
+session = boto3.Session(
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
+    region_name=aws_region
+)
 
 # Create an EC2 client
 ec2 = session.client('ec2')
@@ -13,29 +22,29 @@ response = ec2.run_instances(
     MinCount=1,
     MaxCount=1,
     KeyName='Python_for_automation',  # Replace with your key pair name
-    SecurityGroupIds=['sg-07c91e3b6c617e1ec'],  # <-- Add this line
+    SecurityGroupIds=['sg-07c91e3b6c617e1ec'],
     BlockDeviceMappings=[
         {
             'DeviceName': '/dev/sda1',
             'Ebs': {
                 'VolumeSize': 20,  # Size in GB
-                'DeleteOnTermination': False,
+                'DeleteOnTermination': True,
                 'VolumeType': 'gp3'  # General Purpose SSD
             }
         }
-    ],  
+    ],
     TagSpecifications=[
         {
             'ResourceType': 'instance',
             'Tags': [
                 {
                     'Key': 'Name',
-                    'Value': 'MyEC2Instance'
+                    'Value': 'Pythontest'
                 }
             ]
         }
     ],
-UserData='''#!/bin/bash
+    UserData='''#!/bin/bash
     #update the system
     sudo apt update -y
     #install apache2
