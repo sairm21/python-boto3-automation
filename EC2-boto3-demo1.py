@@ -18,7 +18,7 @@ ec2 = session.client('ec2')
 # Create a new EC2 instance
 response = ec2.run_instances(
     ImageId='ami-02521d90e7410d9f0',  # Example AMI ID, replace with a valid one
-    InstanceType='t2.micro',
+    InstanceType='t3.micro',
     MinCount=1,
     MaxCount=1,
     KeyName='Python_for_automation',  # Replace with your key pair name
@@ -37,10 +37,12 @@ response = ec2.run_instances(
         {
             'ResourceType': 'instance',
             'Tags': [
-                {
-                    'Key': 'Name',
-                    'Value': 'Pythontest'
-                }
+                {'Key': 'Name', 'Value': 'MyAppServer'},
+                {'Key': 'Environment', 'Value': 'Development'},
+                {'Key': 'Application', 'Value': 'WebPortal'},
+                {'Key': 'Owner', 'Value': 'DevOpsTeam'},
+                {'Key': 'Project', 'Value': 'CustomerPortal'},
+                {'Key': 'CostCenter', 'Value': 'IT-001'}
             ]
         }
     ],
@@ -54,7 +56,7 @@ response = ec2.run_instances(
     #enable apache2 service
     sudo systemctl enable apache2
     #create a simple index.html file
-    echo "<h1>Welcome to my EC2 instance!</h1><h2>This instance is created and configured using Python boto3 module</h2>" | sudo tee /var/www/html/index.html
+    echo "<h1>Welcome to MyAppServer EC2 instance!</h1><h2>This instance is created and configured using Python boto3 module</h2>" | sudo tee /var/www/html/index.html
     #restart apache2 service
     sudo systemctl restart apache2
     '''
